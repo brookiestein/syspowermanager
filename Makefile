@@ -1,7 +1,7 @@
 CC 		:= gcc
 HEADERS 	:= includes
 WARNINGS 	:= -Wall -Wextra
-CFLAGS 		:= -O2 -pipe -march=ivybridge -m64 -std=c99 -pthread
+CFLAGS 		:= -O2 -pipe -march=native -m64 -std=c99 -pthread
 CFLAGS 		+= $(shell pkg-config --cflags glib-2.0 gtk+-3.0 --libs gtk+-3.0 dbus-1)
 CFLAGS 		+= $(WARNINGS) -iquote $(HEADERS)
 PROGRAM_NAME 	:= spm
@@ -44,7 +44,6 @@ install :
 	@$(MKDIR) $(SHARE)/$(PROGRAM_NAME)
 	@$(CP) $(RESOURCES) $(SHARE)/$(PROGRAM_NAME)
 	@$(CP) $(PROGRAM_NAME) $(PREFIX)
-	@$(CP) $(RESOURCES) $(SHARE)
 	@echo "Installation finished."
 
 .PHONY : uninstall
