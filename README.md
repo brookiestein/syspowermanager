@@ -158,7 +158,7 @@ if you want to use the GTK interface, then do not offer any parameters.
 If you want to use the GUI, maybe you are interested in these keyboard shortcuts:
 |Keyboard shortcut              | Description            |
 |:------------------------------|------------------------|
-|Escape or e                    | Closes the application. |
+|Escape                         | Closes the application. |
 |p                              | Turns off the system.   |
 |h                              | Hibernates the system.  |
 |r                              | Reboots the system.     |

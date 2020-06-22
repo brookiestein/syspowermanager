@@ -50,4 +50,5 @@ install :
 uninstall :
 	@echo "Uninstalling..."
 	@$(RM) $(PREFIX)/$(PROGRAM_NAME)
+	@$(RM) $(SHARE)/$(PROGRAM_NAME)
 	@echo "Uninstallation finished."
