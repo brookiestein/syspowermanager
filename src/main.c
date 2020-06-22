@@ -70,7 +70,7 @@ main(int argc, char **argv)
         initialize_arguments(&args);
         argp_parse(&argp, argc, argv, 0, 0, &args);
         pid_t pid, sid;
-        pthread_t lid_id;
+        pthread_t lid_id, monitor_id;
         gint monitor = 0;
 
         if (args.daemonize) {
@@ -107,7 +107,7 @@ main(int argc, char **argv)
                         args.file,
                         args.verbose ? "1" : "0"
                 };
-                battery_monitor(options);
+                pthread_create(&monitor_id, NULL, battery_monitor, options);
                 monitor++;
         }
 
@@ -119,6 +119,10 @@ main(int argc, char **argv)
         if (monitor > 0) {
                 if (args.lid) {
                         pthread_join(lid_id, NULL);
+                }
+
+                if (args.monitor) {
+                        pthread_join(monitor_id, NULL);
                 }
         } else {
                 if (args.hibernate) {
