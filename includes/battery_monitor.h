@@ -18,10 +18,6 @@
 #include <gtk/gtk.h>
 #endif
 
-#ifndef _PTHREAD_H
-#include <pthread.h>
-#endif
-
 #ifndef _UNISTD_H
 #include <unistd.h>
 #endif
@@ -32,10 +28,6 @@
 
 #ifndef LOGGER_H
 #include "logger.h"
-#endif
-
-#ifndef SHOW_MESSAGE_H
-#include "show_message.h"
 #endif
 
 #ifndef EMIT_SIGNAL_H

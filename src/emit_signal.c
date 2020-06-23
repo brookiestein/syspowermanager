@@ -44,7 +44,7 @@ emit_signal(const char *method, const char *filepath)
                 return leave_with_error(&error, con, NULL);
         }
 
-        dbus_message_set_auto_start(message, TRUE);
+        dbus_message_set_auto_start(message, FALSE);
 
         if (dbus_message_append_args(message, DBUS_TYPE_BOOLEAN, &EXTRA, DBUS_TYPE_INVALID) != TRUE) {
                 logger("An error occurred while the extra arg was being added.", filepath);

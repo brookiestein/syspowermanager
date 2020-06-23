@@ -13,23 +13,6 @@ all_buttons {
 }buttons;
 
 static gint
-leave(GtkWidget *parent)
-{
-        GtkMessageType mtype = GTK_MESSAGE_QUESTION;
-        GtkButtonsType btype = GTK_BUTTONS_YES_NO;
-        const gchar *title = "Confirmation";
-        const gchar *message = "Are really sure that want to leave?";
-
-        gint response = show_message(parent, mtype, btype, title, message);
-
-        if (response == GTK_RESPONSE_YES) {
-                gtk_widget_destroy(parent);
-        }
-
-        return response;
-}
-
-static gint
 perform(GtkWidget *parent, GtkButton *source)
 {
         const gchar *method = gtk_button_get_label(source);
@@ -39,8 +22,9 @@ perform(GtkWidget *parent, GtkButton *source)
 }
 
 static gint
-activate(GtkApplication *app)
+activate(GtkApplication *app, gpointer data)
 {
+        const gchar *file = (gchar *) data;
         GtkWidget *window;
         GtkWidget *question, *empty_label;
         GtkWidget *layout[2], *layouts;
@@ -58,6 +42,16 @@ activate(GtkApplication *app)
 
         question                = gtk_label_new("What would you want to do?");
         empty_label             = gtk_label_new("");
+
+        /* It will verify only an image. If it isn't found there, then the current directory */
+        /* will be changed to: /usr/share/spm/. In which the files will be stored when */
+        /* the make install order is executed. */
+        GdkPixbuf *test         = gdk_pixbuf_new_from_file("resources/icons/shutdown.png", NULL);
+        if (test == NULL) {
+                if ((chdir("/usr/share/spm")) < 0) {
+                        logger("An error occurred while the current directory was being changed.", file);
+                }
+        }
 
         icons.shutdown          = gtk_image_new_from_file("resources/icons/shutdown.png");
         icons.hibernate         = gtk_image_new_from_file("resources/icons/hibernate.png");
@@ -106,7 +100,7 @@ activate(GtkApplication *app)
         g_signal_connect_swapped(buttons.hibernate, "clicked", G_CALLBACK(perform), window);
         g_signal_connect_swapped(buttons.restart, "clicked", G_CALLBACK(perform), window);
         g_signal_connect_swapped(buttons.suspend, "clicked", G_CALLBACK(perform), window);
-        g_signal_connect_swapped(buttons.leave, "clicked", G_CALLBACK(leave), window);
+        g_signal_connect_swapped(buttons.leave, "clicked", G_CALLBACK(gtk_widget_destroy), window);
 
         gtk_container_add(GTK_CONTAINER(window), layouts);
         gtk_widget_show_all(window);
@@ -114,15 +108,12 @@ activate(GtkApplication *app)
 }
 
 gint
-use_gui(const gchar *file)
+use_gui(gchar *file)
 {
-        if ((chdir("/usr/share/spm")) < 0) {
-                logger("An error occurred while the current directory was being changed.", file);
-        }
-
+        gpointer data = file;
         gchar *APP_ID = "com.github.brookiestein.SystemPowerManagerFork";
         GtkApplication *app = gtk_application_new(APP_ID, G_APPLICATION_FLAGS_NONE);
-        g_signal_connect(app, "activate", G_CALLBACK(activate), NULL);
+        g_signal_connect(app, "activate", G_CALLBACK(activate), data);
         gint status = g_application_run(G_APPLICATION(app), 0, NULL);
         g_object_unref(app);
         return status;

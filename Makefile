@@ -17,7 +17,6 @@ RESOURCES 	:= resources
 SOURCES 	:= src/main.c \
 		src/emit_signal.c \
 		src/logger.c \
-		src/show_message.c \
 		src/lid.c \
 		src/battery_monitor.c \
 		src/gui.c

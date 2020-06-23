@@ -17,17 +17,6 @@ static char
         return date;
 }
 
-static void
-*show_warning(void *data)
-{
-        GtkMessageType mtype = GTK_MESSAGE_WARNING;
-        GtkButtonsType btype = GTK_BUTTONS_OK;
-        const gchar *title = "Warning";
-        const gchar *message = data;
-        show_message(NULL, mtype, btype, title, message);
-        return data;
-}
-
 /* This function waits a pointer with the file where */
 /* store the possible log and the verbose state. */
 void
@@ -50,7 +39,6 @@ void
         unsigned int percentage         = 0u;
         unsigned int warnings           = 0u;
         dbus_bool_t limit_warnings      = FALSE;
-        dbus_bool_t gui_warning         = FALSE;
 
         while (1) {
                 FILE *fp_capacity       = fopen(fcapacity, "r");
@@ -123,17 +111,7 @@ void
                         sprintf(log_message, "[%s] %s", time, message);
                         logger(log_message, file);
                         free(log_message);
-                } else if (percentage <= 20 && strncmp(status, "Discharging", 11) == 0
-                        && is_daemonized && gui_warning != TRUE) {
-
-                        char *message = "Your computer has a very low charge.\n\
-Please, put it to charge to avoid data lose.";
-                        pthread_t id;
-                        pthread_create(&id, NULL, show_warning, message);
-                        pthread_join(id, NULL);
-                        gui_warning = TRUE;
                 } else if (percentage <= 15 && strncmp(status, "Discharging", 11) == 0) {
-                        pthread_t id;
                         char *time = get_time();
                         char *msg0 = "The charge percentage is very low.";
                         char *msg1 = "Your computer is going to sleep to avoid data lose.";
@@ -146,15 +124,7 @@ Please, put it to charge to avoid data lose.";
                         logger(log_message, file);
                         free(log_message);
 
-                        if (is_daemonized) {
-                                pthread_create(&id, NULL, show_warning, msg1);
-                        }
-
                         emit_signal(SUSPEND, file);
-
-                        if (is_daemonized) {
-                                pthread_join(id, NULL);
-                        }
                 } else if (strncmp(status, "Charging", 8) == 0) {
                         warnings = 0u;
                         limit_warnings = FALSE;

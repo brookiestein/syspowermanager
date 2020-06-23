@@ -2,10 +2,6 @@
 #include <gtk/gtk.h>
 #endif
 
-#ifndef SHOW_MESSAGE_H
-#include "show_message.h"
-#endif
-
 #ifndef EMIT_SIGNAL_H
 #include "emit_signal.h"
 #endif
@@ -15,4 +11,4 @@
 #endif
 
 gint
-use_gui(const gchar *file);
+use_gui(gchar *file);
