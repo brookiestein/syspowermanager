@@ -25,7 +25,7 @@ emit_signal(const char *method, const char *filepath)
         DBusMessage *message;
         DBusError error;
         DBusBusType bus_type    = DBUS_BUS_SYSTEM;
-        int reply_timeout       = -1;
+        int reply_timeout       = DBUS_TIMEOUT_USE_DEFAULT;
         const char *DEST        = "org.freedesktop.login1";
         const char *PATH        = "/org/freedesktop/login1";
         const char *NAME        = "org.freedesktop.login1.Manager";

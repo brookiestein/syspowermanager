@@ -13,7 +13,7 @@
 #include "battery_monitor.h"
 #include "gui.h"
 
-const char *argp_program_version = "SPM v1.0.3";
+const char *argp_program_version = "SPM v1.0.4";
 
 static const char doc[] = "\nSystem Power Manager is a \
 software piece that serves\n\
