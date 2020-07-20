@@ -13,7 +13,7 @@
 #include "battery_monitor.h"
 #include "gui.h"
 
-const char *argp_program_version = "SPM v1.0.4";
+const char *argp_program_version = "SPM v1.0.5";
 
 static const char doc[] = "\nSystem Power Manager is a \
 software piece that serves\n\
@@ -63,5 +63,5 @@ arguments {
 dbus_bool_t is_daemonized;
 const char *HIBERNATE   = "Hibernate";
 const char *POWEROFF    = "PowerOff";
-const char *RESTART     = "Restart";
+const char *RESTART     = "Reboot";
 const char *SUSPEND     = "Suspend";

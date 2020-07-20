@@ -67,7 +67,7 @@ activate(GtkApplication *app, gpointer data)
         gtk_button_set_image(GTK_BUTTON(buttons.hibernate), icons.hibernate);
         gtk_widget_add_accelerator(buttons.hibernate, "clicked", accel, GDK_KEY_h, 0, GTK_ACCEL_VISIBLE);
 
-        buttons.restart         = gtk_button_new_with_label("Restart");
+        buttons.restart         = gtk_button_new_with_label("Reboot");
         gtk_button_set_image(GTK_BUTTON(buttons.restart), icons.restart);
         gtk_widget_add_accelerator(buttons.restart, "clicked", accel, GDK_KEY_r, 0, GTK_ACCEL_VISIBLE);
 
