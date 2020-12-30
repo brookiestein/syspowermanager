@@ -1,5 +1,5 @@
 CC	:= cc
-CFLAGS	:= -O2 -pipe -march=ivybridge -m64 -std=c99 -Wall -Wextra -Iincludes
+CFLAGS	:= -O2 -march=native -m64 -std=c99 -Wall -Wextra -Iincludes
 CFLAGS	+= $(shell pkg-config --cflags --libs gtk+-3.0 dbus-1)
 TARGET	:= spm
 PREFIX	:= /usr/local/bin
