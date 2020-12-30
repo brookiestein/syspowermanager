@@ -36,8 +36,8 @@ static const char hbt_info[]            = "Hibernates the system.";
 static const char pof_info[]            = "Turns off the system.";
 static const char rst_info[]            = "Restarts the system.";
 static const char ssp_info[]            = "Suspends the system.";
-static const char time_info[]           = "Does one of either hibernate, poweroff, restart\n\
-or suspend after $seconds had finished.";
+static const char wait_info[]           = "Waits for $seconds to finish before do one of\n\
+either hibernate, poweroff, restart or suspend.";
 
 static const char monitor_info[]        = "SPM will monitors the battery's charge percentage\n\
 and, if it detects that it's less than 15% then it will put your \
@@ -55,8 +55,8 @@ static struct argp_option options[] = {
         { "poweroff",   'p', 0,         0,                      pof_info,       5 },
         { "restart",    'r', 0,         0,                      rst_info,       6 },
         { "suspend",    's', 0,         0,                      ssp_info,       7 },
-        { "time",       't', "seconds", OPTION_ARG_OPTIONAL,    time_info,      8 },
-        { "verbose",    'v', 0,         0,                      verbose_info,   9 },
+        { "verbose",    'v', 0,         0,                      verbose_info,   8 },
+        { "wait",       'w', "seconds", OPTION_ARG_OPTIONAL,    wait_info,      9 },
         { 0 }
 };
 
@@ -65,7 +65,7 @@ arguments {
         gboolean daemonize, gui, hibernate, lid, monitor;
         gboolean poweroff, restart, suspend, use_file, verbose;
         gchar *file;
-        int time;
+        int wait;
 }args;
 
 dbus_bool_t is_daemonized;

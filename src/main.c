@@ -33,11 +33,11 @@ parse_opt(int key, char *arg, struct argp_state *state)
         case 's':
                 arguments->suspend      = TRUE;
                 break;
-        case 't':
-                arguments->time         = isdigit(arg[0]) ? atoi(arg) : -1;
-                break;
         case 'v':
                 arguments->verbose      = TRUE;
+                break;
+        case 'w':
+                arguments->wait         = isdigit(arg[0]) ? atoi(arg) : -1;
                 break;
         case ARGP_KEY_NO_ARGS:
                 arguments->gui          = TRUE;
@@ -64,7 +64,7 @@ initialize_arguments(struct arguments *args)
         args->suspend   = FALSE;
         args->use_file  = FALSE;
         args->verbose   = FALSE;
-        args->time      = -1;
+        args->wait      = -1;
 }
 
 int
@@ -130,17 +130,21 @@ main(int argc, char **argv)
                 }
         } else {
                 if (args.hibernate || args.poweroff || args.restart || args.suspend) {
-                        if (args.time > 0) {
-                                while ((args.time--) > 0) {
+                        if (args.wait > 0) {
+                                while ((args.wait--) > 0) {
                                         if (args.verbose) {
+                                                if (!args.daemonize) {
+                                                        setbuf(stdout, NULL);
+                                                        printf("\r%i seconds remaining.", args.wait);
+                                                }
                                                 /* Assuming the worst case:
-                                                 * the user has entered the maximum integer-allowed
-                                                 * value, this would a required size to store the
-                                                 * whole message.
-                                                 */
+                                                * the user has entered the maximum integer-allowed
+                                                * value, this would a required size to store the
+                                                * whole message.
+                                                */
                                                 size_t size = 35;
                                                 char *msg = (char *) malloc(size * sizeof(char));
-                                                snprintf(msg, size, "%i seconds remaining.", args.time);
+                                                snprintf(msg, size, "%i seconds remaining.", args.wait);
                                                 logger(msg, args.file);
                                                 free(msg);
                                         }
