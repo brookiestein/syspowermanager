@@ -130,9 +130,23 @@ main(int argc, char **argv)
                 }
         } else {
                 if (args.hibernate || args.poweroff || args.restart || args.suspend) {
-                        if (args.time > 0)
-                                while ((args.time--) > 0)
+                        if (args.time > 0) {
+                                while ((args.time--) > 0) {
+                                        if (args.verbose) {
+                                                /* Assuming the worst case:
+                                                 * the user has entered the maximum integer-allowed
+                                                 * value, this would a required size to store the
+                                                 * whole message.
+                                                 */
+                                                size_t size = 35;
+                                                char *msg = (char *) malloc(size * sizeof(char));
+                                                snprintf(msg, size, "%i seconds remaining.", args.time);
+                                                logger(msg, args.file);
+                                                free(msg);
+                                        }
                                         sleep(1);
+                                }
+                        }
 
                         if (args.hibernate) {
                                 emit_signal(HIBERNATE, args.file);
