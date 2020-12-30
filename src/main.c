@@ -33,6 +33,9 @@ parse_opt(int key, char *arg, struct argp_state *state)
         case 's':
                 arguments->suspend      = TRUE;
                 break;
+        case 't':
+                arguments->time         = isdigit(arg[0]) ? atoi(arg) : -1;
+                break;
         case 'v':
                 arguments->verbose      = TRUE;
                 break;
@@ -61,6 +64,7 @@ initialize_arguments(struct arguments *args)
         args->suspend   = FALSE;
         args->use_file  = FALSE;
         args->verbose   = FALSE;
+        args->time      = -1;
 }
 
 int
@@ -125,14 +129,20 @@ main(int argc, char **argv)
                         pthread_join(monitor_id, NULL);
                 }
         } else {
-                if (args.hibernate) {
-                        emit_signal(SUSPEND, args.file);
-                } else if (args.poweroff) {
-                        emit_signal(POWEROFF, args.file);
-                } else if (args.restart) {
-                        emit_signal(RESTART, args.file);
-                } else if (args.suspend) {
-                        emit_signal(SUSPEND, args.file);
+                if (args.hibernate || args.poweroff || args.restart || args.suspend) {
+                        if (args.time > 0)
+                                while ((args.time--) > 0)
+                                        sleep(1);
+
+                        if (args.hibernate) {
+                                emit_signal(HIBERNATE, args.file);
+                        } else if (args.poweroff) {
+                                emit_signal(POWEROFF, args.file);
+                        } else if (args.restart) {
+                                emit_signal(RESTART, args.file);
+                        } else if (args.suspend) {
+                                emit_signal(SUSPEND, args.file);
+                        }
                 } else {
                         use_gui(args.file);
                 }
