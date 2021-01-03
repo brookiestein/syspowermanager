@@ -7,43 +7,43 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#include "format.h"
 #include "logger.h"
 #include "emit_signal.h"
 #include "lid.h"
 #include "battery_monitor.h"
 #include "gui.h"
 
-const char *argp_program_version = "SPM v1.0.8";
+const char *argp_program_version = "SPM v1.0.9";
 
 static const char doc[] = "\nSystem Power Manager is a \
-software piece that serves\n\
-to manage some power options, like Shutdown or Reboot.\n\
-SPM's gist is to offer you a little interface\n\
-through which you can: Shutdown, reboot, suspend and/or\n\
-hibernate your computer without root permissions.\n\
-Also, you can monitor your battery's charge percentage.\n\
-By way of if SPM detects that it's less than 15% then it\n\
-will put your computer to sleep, and so avoid that you\n\
+software piece that serves \
+to manage some power options, like Shutdown or Reboot. \
+SPM's gist is to offer you a little interface \
+through which you can: Shutdown, reboot, suspend and/or \
+hibernate your computer without root permissions. \
+Also, you can monitor your battery's charge percentage. \
+By way of if SPM detects that it's less than 15% then it \
+will put your computer to sleep, and so avoid that you \
 lose important data.\v\
-This software is distributed under the terms of the GNU GPL v2 license.\n\
+This software is distributed under the terms of the GNU GPL v2 license. \
 You can find this project at: https://github.com/brookiestein/syspowermanager";
 
 static const char daemon_info[]         = "Work as a daemon.";
 static const char file_info[]           = "File where the log will be stored.";
-static const char lid_info[]            = "Monitor the laptop's lid to suspend\n\
+static const char lid_info[]            = "Monitor the laptop's lid to suspend \
 the system if detects that it has been closed.";
 static const char hbt_info[]            = "Hibernate the system.";
 static const char pof_info[]            = "Turn off the system.";
 static const char rst_info[]            = "Restart the system.";
 static const char ssp_info[]            = "Suspend the system.";
-static const char wait_info[]           = "Wait for $seconds to finish before do one of\n\
+static const char verbose_info[]        = "SPM will be verbose. It depends on the options you use.";
+static const char wait_info[]           = "Wait for $seconds to finish before do one of \
 either hibernate, poweroff, restart or suspend.";
 
-static const char monitor_info[]        = "SPM will monitor the battery's charge percentage\n\
+static const char monitor_info[]        = "SPM will monitor the battery's charge percentage \
 and, if it detects that it's less than 15% then SPM will put your \
 computer to sleep.";
-
-static const char verbose_info[]        = "SPM will be verbose. It depends on the options you use.";
 
 static struct argp_option options[] = {
         { "daemon",     'd', 0,         0,                      daemon_info,    0 },

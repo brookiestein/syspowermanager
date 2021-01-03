@@ -9,6 +9,7 @@
 #include "logger.h"
 #include "emit_signal.h"
 #include "notify.h"
+#include "format.h"
 
 extern const char *SUSPEND;
 extern dbus_bool_t is_daemonized;

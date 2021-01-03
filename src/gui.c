@@ -40,7 +40,7 @@ activate(GtkApplication *app, gpointer data)
         gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
         gtk_window_add_accel_group(GTK_WINDOW(window), accel);
 
-        question                = gtk_label_new("What would you want to do?");
+        question                = gtk_label_new("What would you like to do?");
         empty_label             = gtk_label_new("");
 
         /* It will verify only an image. If it isn't found there, then the current directory */
@@ -62,22 +62,27 @@ activate(GtkApplication *app, gpointer data)
         buttons.shutdown        = gtk_button_new_with_label("PowerOff");
         gtk_button_set_image(GTK_BUTTON(buttons.shutdown), icons.shutdown);
         gtk_widget_add_accelerator(buttons.shutdown, "clicked", accel, GDK_KEY_p, 0, GTK_ACCEL_VISIBLE);
+        gtk_widget_set_tooltip_text(buttons.shutdown, "By pressing this button, your computer will shutdown.");
 
         buttons.hibernate       = gtk_button_new_with_label("Hibernate");
         gtk_button_set_image(GTK_BUTTON(buttons.hibernate), icons.hibernate);
         gtk_widget_add_accelerator(buttons.hibernate, "clicked", accel, GDK_KEY_h, 0, GTK_ACCEL_VISIBLE);
+        gtk_widget_set_tooltip_text(buttons.hibernate, "By pressing this button, your computer will hibernate.");
 
         buttons.restart         = gtk_button_new_with_label("Reboot");
         gtk_button_set_image(GTK_BUTTON(buttons.restart), icons.restart);
         gtk_widget_add_accelerator(buttons.restart, "clicked", accel, GDK_KEY_r, 0, GTK_ACCEL_VISIBLE);
+        gtk_widget_set_tooltip_text(buttons.restart, "By pressing this button, your computer will restart.");
 
         buttons.suspend         = gtk_button_new_with_label("Suspend");
         gtk_button_set_image(GTK_BUTTON(buttons.suspend), icons.suspend);
         gtk_widget_add_accelerator(buttons.suspend, "clicked", accel, GDK_KEY_s, 0, GTK_ACCEL_VISIBLE);
+        gtk_widget_set_tooltip_text(buttons.suspend, "By pressing this button, your computer will suspend.");
 
         buttons.leave           = gtk_button_new_with_label("Leave");
         gtk_button_set_image(GTK_BUTTON(buttons.leave), icons.leave);
         gtk_widget_add_accelerator(buttons.leave, "clicked", accel, GDK_KEY_Escape, 0, GTK_ACCEL_VISIBLE);
+        gtk_widget_set_tooltip_text(buttons.leave, "By pressing this button, this interface will be closed.");
 
         for (gint i = 0; i < 2; i++) {
                 layout[i]               = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);

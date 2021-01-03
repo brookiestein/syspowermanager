@@ -15,6 +15,7 @@ SOURCES 	:= ${SRC_DIR}/main.c \
 		${SRC_DIR}/logger.c \
 		${SRC_DIR}/lid.c \
 		${SRC_DIR}/battery_monitor.c \
+		${SRC_DIR}/format.c \
 		${SRC_DIR}/notify.c \
 		${SRC_DIR}/gui.c
 OBJECTS 	:= ${SOURCES:.c=.o}

@@ -109,7 +109,8 @@ main(int argc, char **argv)
         if (args.monitor) {
                 char *options[] = {
                         args.file,
-                        args.verbose ? "1" : "0"
+                        args.verbose ? "1" : "0",
+                        args.daemonize ? "1" : "0",
                 };
                 pthread_create(&monitor_id, NULL, battery_monitor, options);
                 monitor++;
@@ -142,9 +143,7 @@ main(int argc, char **argv)
                                                 * value, this would a required size to store the
                                                 * whole message.
                                                 */
-                                                size_t size = 35;
-                                                char *msg = (char *) malloc(size * sizeof(char));
-                                                snprintf(msg, size, "%i seconds remaining.", args.wait);
+                                                char *msg = format(35, "%i seconds remaining.", args.wait);
                                                 logger(msg, args.file);
                                                 free(msg);
                                         }
