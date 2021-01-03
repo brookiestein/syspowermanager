@@ -15,7 +15,7 @@ parse_opt(int key, char *arg, struct argp_state *state)
                 arguments->use_file     = TRUE;
                 arguments->file         = arg;
                 break;
-        case 'H':
+        case 'h':
                 arguments->hibernate    = TRUE;
                 break;
         case 'l':

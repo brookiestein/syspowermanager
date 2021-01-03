@@ -1,5 +1,7 @@
 #include "battery_monitor.h"
 
+#define TIME 20 /* Time to wait after each verification. */
+
 static char *RED          = "\e[1;31m";
 static char *GREEN        = "\e[1;32m";
 static char *ORANGE       = "\e[1;33m";
@@ -88,6 +90,7 @@ void
                         warnings++;
                         char *message = "The charge percentage is arriving to the allowed limit.";
                         printf("%s%s%s\n", ORANGE, message, NO_COLOR);
+                        notify_send(message, file, NOTIFY_URGENCY_NORMAL); /* Useful if it's running as a daemon. */
 
                         char *time = get_time();
 
@@ -105,6 +108,7 @@ void
 
                         message = "Please, put your computer to charge before it arrives to the established limit.";
                         printf("%s%s%s\n\n", color, message, NO_COLOR);
+                        notify_send(message, file, NOTIFY_URGENCY_NORMAL);
 
                         log_size = strlen(message) + strlen(time) + 4; /* The same */
                         log_message = (char *) realloc(log_message, log_size + 1);
@@ -122,6 +126,7 @@ void
                         sprintf(log_message, "[%s] %s\n%s", time, msg0, msg1);
                         printf("%s%s\n%s%s\n", RED, msg0, msg1, NO_COLOR);
                         logger(log_message, file);
+                        notify_send(log_message, file, NOTIFY_URGENCY_CRITICAL);
                         free(log_message);
 
                         emit_signal(SUSPEND, file);
@@ -130,7 +135,7 @@ void
                         limit_warnings = FALSE;
                 }
 
-                sleep(20);
+                sleep(TIME);
         }
 
         free(percent);

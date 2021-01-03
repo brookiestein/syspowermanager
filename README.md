@@ -43,21 +43,20 @@ things that shouldn't give much work perform, like shutdown or reboot the system
 
 ### Dependencies:
 ```
-gcc
-make
+make (for compiling)
 dbus
 gtk3
 elogind
-glib (It's included on gtk)
+libnotify
 ```
 #### How can I install the dependencies?
 Depending of your distribution use the corresponding command:
-| Distribution                     | Command                                            |
-|:---------------------------------|----------------------------------------------------|
-|Debian/Ubuntu and derivatives     |`apt install gcc make dbus libgtk-3-dev elogind`   |
-|Fedora/CentOS/RHEL                |`dnf install gcc make dbus-glib gtk3-devel elogind`|
-|Gentoo/Funtoo and derivatives     |`emerge --ask gcc make dbus gtk+ elogind`          |
-|Arch Linux/Manjaro and derivatives|`pacman -S gcc make dbus gtk3 elogind`             |
+| Distribution                     | Command                                                                                      |
+|:---------------------------------|----------------------------------------------------------------------------------------------|
+|Debian/Ubuntu and derivatives     |`apt install make dbus libgtk-3-dev elogind libnotify-dev`                                    |
+|Fedora/CentOS/RHEL                |`dnf install make dbus-glib gtk3-devel elogind libnotify`                                     |
+|Gentoo/Funtoo and derivatives     |`emerge --ask sys-devel/make sys-apps/dbus x11-libs/gtk+ x11-libs/libnotify sys-auth/elogind` |
+|Arch Linux/Manjaro and derivatives|`pacman -S make dbus gtk3 elogind libnotify`                                                  |
 
 **Remember execute these commands as user root**
 
