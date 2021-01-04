@@ -10,5 +10,5 @@
 /* Defined on main */
 extern const char *SUSPEND;
 
-void
-*lid(void *data);
+void *
+lid(void *data);

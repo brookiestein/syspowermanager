@@ -12,7 +12,7 @@ all_buttons {
         GtkWidget *suspend, *leave;
 }buttons;
 
-static gint
+static int
 perform(GtkWidget *parent, GtkButton *source)
 {
         const gchar *method = gtk_button_get_label(source);
@@ -21,16 +21,17 @@ perform(GtkWidget *parent, GtkButton *source)
         return 0;
 }
 
-static gint
+static int
 activate(GtkApplication *app, gpointer data)
 {
-        const gchar *file = (gchar *) data;
+        const char *file = (char *) data;
         GtkWidget *window;
         GtkWidget *question, *empty_label;
         GtkWidget *layout[2], *layouts;
         GtkAccelGroup *accel;
-        const gint WIDTH        = 250;
-        const gint HEIGHT       = 90;
+
+        const int WIDTH         = 250;
+        const int HEIGHT        = 90;
 
         accel                   = gtk_accel_group_new();
         window                  = gtk_application_window_new(app);
@@ -43,7 +44,7 @@ activate(GtkApplication *app, gpointer data)
         question                = gtk_label_new("What would you like to do?");
         empty_label             = gtk_label_new("");
 
-        /* It will verify only an image. If it isn't found there, then the current directory */
+        /* It will verify only an image. If it hasn't been found there, then the current directory */
         /* will be changed to: /usr/share/spm/. In which the files will be stored when */
         /* the make install order is executed. */
         GdkPixbuf *test         = gdk_pixbuf_new_from_file("resources/icons/shutdown.png", NULL);
@@ -85,10 +86,10 @@ activate(GtkApplication *app, gpointer data)
         gtk_widget_set_tooltip_text(buttons.leave, "By pressing this button, this interface will be closed.");
 
         for (gint i = 0; i < 2; i++) {
-                layout[i]               = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+                layout[i] = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
         }
 
-        layouts                 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+        layouts = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
         gtk_box_pack_start(GTK_BOX(layout[0]), question, FALSE, FALSE, 150);
         gtk_box_pack_start(GTK_BOX(layout[1]), buttons.shutdown, FALSE, FALSE, 10);
@@ -113,10 +114,10 @@ activate(GtkApplication *app, gpointer data)
 }
 
 gint
-use_gui(gchar *file)
+use_gui(char *file)
 {
-        gpointer data = file;
-        gchar *APP_ID = "com.github.brookiestein.SystemPowerManagerFork";
+        gpointer data       = file;
+        char *APP_ID        = "com.github.brookiestein.SystemPowerManager";
         GtkApplication *app = gtk_application_new(APP_ID, G_APPLICATION_FLAGS_NONE);
         g_signal_connect(app, "activate", G_CALLBACK(activate), data);
         gint status = g_application_run(G_APPLICATION(app), 0, NULL);

@@ -102,8 +102,6 @@ main(int argc, char **argv)
                 close(STDIN_FILENO);
                 close(STDOUT_FILENO);
                 close(STDERR_FILENO);
-
-                is_daemonized = TRUE;
         }
 
         if (args.monitor) {
@@ -131,24 +129,26 @@ main(int argc, char **argv)
                 }
         } else {
                 if (args.hibernate || args.poweroff || args.restart || args.suspend) {
-                        if (args.wait > 0) {
-                                while ((args.wait--) > 0) {
-                                        if (args.verbose) {
-                                                if (!args.daemonize) {
-                                                        setbuf(stdout, NULL);
-                                                        printf("\r%i seconds remaining.", args.wait);
-                                                }
+                        while ((args.wait--) > 0) {
+                                if (args.verbose) {
+                                        if (!args.daemonize) {
+                                                setbuf(stdout, NULL);
+                                                printf("\r%i seconds remaining.", args.wait);
+                                        }
+
+                                        if (strncmp(args.file, "/dev/null", 9)) {
                                                 /* Assuming the worst case:
                                                 * the user has entered the maximum integer-allowed
-                                                * value, this would a required size to store the
+                                                * value, this would be the required size to store the
                                                 * whole message.
                                                 */
-                                                char *msg = format(35, "%i seconds remaining.", args.wait);
+                                                size_t size = 35;
+                                                char *msg = format(size, "%i seconds remaining.", args.wait);
                                                 logger(msg, args.file);
                                                 free(msg);
                                         }
-                                        sleep(1);
                                 }
+                                sleep(1);
                         }
 
                         if (args.hibernate) {

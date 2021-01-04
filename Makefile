@@ -14,6 +14,7 @@ SOURCES 	:= ${SRC_DIR}/main.c \
 		${SRC_DIR}/emit_signal.c \
 		${SRC_DIR}/logger.c \
 		${SRC_DIR}/lid.c \
+		${SRC_DIR}/get_time.c \
 		${SRC_DIR}/battery_monitor.c \
 		${SRC_DIR}/format.c \
 		${SRC_DIR}/notify.c \
@@ -29,7 +30,7 @@ clean :
 
 .PHONY : install
 install :
-	${MKDIR} ${SHARE}/${PROGRAM_NAME}
+	${MKDIR} ${SHARE}/${TARGET}
 	${CP} ${RESOURCES} ${SHARE}/${TARGET}
 	${CP} ${TARGET} ${PREFIX}
 

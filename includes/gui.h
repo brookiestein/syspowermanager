@@ -5,4 +5,4 @@
 #define GUI_H 1
 
 gint
-use_gui(gchar *file);
+use_gui(char *file);

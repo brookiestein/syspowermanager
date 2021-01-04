@@ -6,4 +6,5 @@
 
 #define NOTIFY_H 1
 
-int notify_send(const char *body, const char *logstream, NotifyUrgency urgency);
+int
+notify_send(const char *body, const char *logstream, NotifyUrgency urgency);

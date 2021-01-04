@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <glib.h>
+#include <stdbool.h>
+#include <string.h>
 #include <argp.h>
 #include <error.h>
 #include <unistd.h>
@@ -14,7 +15,7 @@
 #include "battery_monitor.h"
 #include "gui.h"
 
-const char *argp_program_version = "SPM v1.0.9";
+const char *argp_program_version = "SPM v1.1.0";
 
 static const char doc[] = "\nSystem Power Manager is a \
 software piece that serves \
@@ -61,13 +62,12 @@ static struct argp_option options[] = {
 
 static struct
 arguments {
-        gboolean daemonize, gui, hibernate, lid, monitor;
-        gboolean poweroff, restart, suspend, use_file, verbose;
-        gchar *file;
+        bool daemonize, gui, hibernate, lid, monitor;
+        bool poweroff, restart, suspend, use_file, verbose;
+        char *file;
         int wait;
 }args;
 
-dbus_bool_t is_daemonized;
 const char *HIBERNATE   = "Hibernate";
 const char *POWEROFF    = "PowerOff";
 const char *RESTART     = "Reboot";

@@ -15,7 +15,6 @@ notify_send(const char *body, const char *logstream, NotifyUrgency urgency)
 
         GError *err = NULL;
         if (!notify_notification_show(n, &err)) {
-                /* logger("An error occurred while showing notification.", logstream); */
                 logger(err->message, logstream);
                 g_clear_error(&err);
                 return 1;
