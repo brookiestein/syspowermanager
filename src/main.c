@@ -67,15 +67,37 @@ initialize_arguments(struct arguments *args)
         args->wait      = -1;
 }
 
+static void
+sig_handler(int signal)
+{
+        const size_t size = 50;
+        char *message     = format(size,
+        "Ending program execution because of signal (%i).",
+        signal);
+
+        logger(message, args.file);
+
+        if (!args.daemonize)
+                printf("%s\n", message);
+
+        if (args.lid)
+                pthread_cancel(lid_id);
+
+        if (args.monitor)
+                pthread_cancel(monitor_id);
+
+        free(message);
+        exit(signal);
+}
+
 int
 main(int argc, char **argv)
 {
-        /* struct arguments args; */
         initialize_arguments(&args);
         argp_parse(&argp, argc, argv, 0, 0, &args);
         pid_t pid, sid;
-        pthread_t lid_id, monitor_id;
         gint monitor = 0;
+        signal(SIGINT, sig_handler);
 
         if (args.daemonize) {
                 pid = fork();

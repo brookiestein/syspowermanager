@@ -5,6 +5,7 @@
 #include <argp.h>
 #include <error.h>
 #include <unistd.h>
+#include <signal.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -15,7 +16,7 @@
 #include "battery_monitor.h"
 #include "gui.h"
 
-const char *argp_program_version = "SPM v1.1.0";
+const char *argp_program_version = "SPM v1.1.1";
 
 static const char doc[] = "\nSystem Power Manager is a \
 software piece that serves \
@@ -67,6 +68,9 @@ arguments {
         char *file;
         int wait;
 }args;
+
+/* Global here for the signal handler to access them. */
+pthread_t lid_id, monitor_id;
 
 const char *HIBERNATE   = "Hibernate";
 const char *POWEROFF    = "PowerOff";
