@@ -10,6 +10,7 @@ parse_opt(int key, char *arg, struct argp_state *state)
         {
         case 'd':
                 arguments->daemonize    = TRUE;
+                arguments->gui          = FALSE;
                 break;
         case 'f':
                 arguments->use_file     = TRUE;
@@ -17,21 +18,27 @@ parse_opt(int key, char *arg, struct argp_state *state)
                 break;
         case 'h':
                 arguments->hibernate    = TRUE;
+                arguments->gui          = FALSE;
                 break;
         case 'l':
                 arguments->lid          = TRUE;
+                arguments->gui          = FALSE;
                 break;
         case 'm':
                 arguments->monitor      = TRUE;
+                arguments->gui          = FALSE;
                 break;
         case 'p':
                 arguments->poweroff     = TRUE;
+                arguments->gui          = FALSE;
                 break;
         case 'r':
                 arguments->restart      = TRUE;
+                arguments->gui          = FALSE;
                 break;
         case 's':
                 arguments->suspend      = TRUE;
+                arguments->gui          = FALSE;
                 break;
         case 'v':
                 arguments->verbose      = TRUE;
@@ -40,7 +47,6 @@ parse_opt(int key, char *arg, struct argp_state *state)
                 arguments->wait         = isdigit(arg[0]) ? atoi(arg) : -1;
                 break;
         case ARGP_KEY_NO_ARGS:
-                arguments->gui          = TRUE;
                 break;
         default:
                 return ARGP_ERR_UNKNOWN;
@@ -55,6 +61,7 @@ static void
 initialize_arguments(struct arguments *args)
 {
         args->daemonize = FALSE;
+        args->gui       = TRUE; /* This is the default status. */
         args->file      = "/dev/null";
         args->hibernate = FALSE;
         args->lid       = FALSE;
@@ -65,6 +72,15 @@ initialize_arguments(struct arguments *args)
         args->use_file  = FALSE;
         args->verbose   = FALSE;
         args->wait      = -1;
+}
+
+static char *
+get_file_path(void)
+{
+        gid_t gid = getgid();
+        const size_t size = 25;
+        char *pid_file = format(size, "/run/user/%i/spm.pid", gid);
+        return pid_file;
 }
 
 static void
@@ -86,8 +102,41 @@ sig_handler(int signal)
         if (args.monitor)
                 pthread_cancel(monitor_id);
 
+        char *pid_file = get_file_path();
+        FILE *fp = fopen(pid_file, "r");
+
+        if (fp) {
+                remove(pid_file);
+                fclose(fp);
+        }
+
+        free(pid_file);
         free(message);
         exit(signal);
+}
+
+static int
+it_is_running(bool gui)
+{
+        if (gui)
+                return EXIT_SUCCESS;
+
+        char *pid_file = get_file_path();
+        FILE *fp = fopen(pid_file, "r");
+
+        if (fp) {
+                fclose(fp);
+                free(pid_file);
+                return EXIT_FAILURE;
+        }
+
+        fp = fopen(pid_file, "w");
+        free(pid_file);
+        pid_t pid = getpid();
+        fprintf(fp, "%i", pid);
+        fclose(fp);
+        return EXIT_SUCCESS; /* There's not an instance running at
+                              * this time, or yes? */
 }
 
 int
@@ -96,8 +145,15 @@ main(int argc, char **argv)
         initialize_arguments(&args);
         argp_parse(&argp, argc, argv, 0, 0, &args);
         pid_t pid, sid;
-        gint monitor = 0;
         signal(SIGINT, sig_handler);
+
+        if (it_is_running(args.gui)) {
+                char message[] = "There's already an instance of SPM running.";
+                if (!args.daemonize)
+                        printf("%s\n", message);
+                logger(message, args.file);
+                return EXIT_FAILURE;
+        }
 
         if (args.daemonize) {
                 pid = fork();
@@ -133,58 +189,52 @@ main(int argc, char **argv)
                         args.daemonize ? "1" : "0",
                 };
                 pthread_create(&monitor_id, NULL, battery_monitor, options);
-                monitor++;
         }
 
-        if (args.lid) {
+        if (args.lid)
                 pthread_create(&lid_id, NULL, lid, args.file);
-                monitor++;
-        }
 
-        if (monitor > 0) {
-                if (args.lid) {
-                        pthread_join(lid_id, NULL);
+        if (args.monitor)
+                pthread_join(monitor_id, NULL);
+        if (args.lid)
+                pthread_join(lid_id, NULL);
+
+        if ((!args.monitor && !args.lid) && (args.hibernate || args.poweroff ||
+                args.restart || args.suspend)) {
+
+                while ((args.wait--) > 0) {
+                        if (args.verbose) {
+                                if (!args.daemonize) {
+                                        setbuf(stdout, NULL);
+                                        printf("\r%i seconds remaining.", args.wait);
+                                }
+
+                                if (strncmp(args.file, "/dev/null", 9)) {
+                                        /* Assuming the worst case:
+                                        * the user has entered the maximum integer-allowed
+                                        * value, this would be the required size to store the
+                                        * whole message.
+                                        */
+                                        size_t size = 35;
+                                        char *msg = format(size, "%i seconds remaining.", args.wait);
+                                        logger(msg, args.file);
+                                        free(msg);
+                                }
+                        }
+                        sleep(1);
                 }
 
-                if (args.monitor) {
-                        pthread_join(monitor_id, NULL);
+                if (args.hibernate) {
+                        emit_signal(HIBERNATE, args.file);
+                } else if (args.poweroff) {
+                        emit_signal(POWEROFF, args.file);
+                } else if (args.restart) {
+                        emit_signal(RESTART, args.file);
+                } else if (args.suspend) {
+                        emit_signal(SUSPEND, args.file);
                 }
         } else {
-                if (args.hibernate || args.poweroff || args.restart || args.suspend) {
-                        while ((args.wait--) > 0) {
-                                if (args.verbose) {
-                                        if (!args.daemonize) {
-                                                setbuf(stdout, NULL);
-                                                printf("\r%i seconds remaining.", args.wait);
-                                        }
-
-                                        if (strncmp(args.file, "/dev/null", 9)) {
-                                                /* Assuming the worst case:
-                                                * the user has entered the maximum integer-allowed
-                                                * value, this would be the required size to store the
-                                                * whole message.
-                                                */
-                                                size_t size = 35;
-                                                char *msg = format(size, "%i seconds remaining.", args.wait);
-                                                logger(msg, args.file);
-                                                free(msg);
-                                        }
-                                }
-                                sleep(1);
-                        }
-
-                        if (args.hibernate) {
-                                emit_signal(HIBERNATE, args.file);
-                        } else if (args.poweroff) {
-                                emit_signal(POWEROFF, args.file);
-                        } else if (args.restart) {
-                                emit_signal(RESTART, args.file);
-                        } else if (args.suspend) {
-                                emit_signal(SUSPEND, args.file);
-                        }
-                } else {
-                        use_gui(args.file);
-                }
+                use_gui(args.file);
         }
 
         return 0;
